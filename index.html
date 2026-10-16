@@ -148,8 +148,6 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .crop.b { top: 64px; right: 12px; border-width: 1px 1px 0 0; }
 .crop.c { bottom: 40px; left: 12px; border-width: 0 0 1px 1px; }
 .crop.d { bottom: 40px; right: 12px; border-width: 0 1px 1px 0; }
-.sound { position: absolute; bottom: 54px; right: var(--gutter); z-index: 3; font: 500 11px/1 var(--mono); letter-spacing: .14em; padding: 9px 12px; border: 1px solid currentColor; border-radius: 99px; opacity: var(--hud, 1); }
-.sound[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--ivory); }
 
 /* grain */
 .grain { position: absolute; inset: -50%; pointer-events: none; opacity: .09; mix-blend-mode: overlay;
@@ -368,7 +366,6 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
         <div class="hud__br">SC <span id="scNo">01</span> / 06</div>
         <div class="bar" id="bar"><i></i><i></i><i></i><i></i><i></i><i></i></div>
       </div>
-      <button class="sound" id="sound" aria-pressed="false">♪ SOUND OFF</button>
     </div>
 
     <div class="reel__title" aria-hidden="true">
@@ -528,7 +525,6 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
   /* ---------- 鍵盤を組み立て ---------- */
   const kbd = $('#kbd');
   const WHITE = 15;
-  const whiteMidi = [60,62,64,65,67,69,71,72,74,76,77,79,81,83,84];
   const keys = [];
   for (let i = 0; i < WHITE; i++) {
     const w = document.createElement('div'); w.className = 'w'; kbd.appendChild(w); keys.push(w);
@@ -545,28 +541,6 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
   // ド ミ ソ ド ミ ド ソ ミ（白鍵のインデックス）
   const melody = [0, 2, 4, 7, 9, 7, 4, 2];
 
-  /* ---------- 音（任意） ---------- */
-  let ctx = null, soundOn = false;
-  const note = (midi, len = 0.9, vol = 0.18) => {
-    if (!soundOn || !ctx) return;
-    const t = ctx.currentTime, f = 440 * Math.pow(2, (midi - 69) / 12);
-    const g = ctx.createGain(); g.connect(ctx.destination);
-    g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(vol, t + 0.008); g.gain.exponentialRampToValueAtTime(0.0001, t + len);
-    [[1, 'triangle', 1], [2, 'sine', 0.35], [3, 'sine', 0.12]].forEach(([m, type, a]) => {
-      const o = ctx.createOscillator(), og = ctx.createGain();
-      o.type = type; o.frequency.value = f * m; og.gain.value = a;
-      o.connect(og).connect(g); o.start(t); o.stop(t + len);
-    });
-  };
-  const soundBtn = $('#sound');
-  soundBtn.addEventListener('click', () => {
-    ctx = ctx || new (window.AudioContext || window.webkitAudioContext)();
-    ctx.resume();
-    soundOn = !soundOn;
-    soundBtn.setAttribute('aria-pressed', soundOn);
-    soundBtn.textContent = soundOn ? '♪ SOUND ON' : '♪ SOUND OFF';
-  });
-
   /* ---------- リールのビート駆動 ---------- */
   const BPM = 96, EIGHTH = 60000 / BPM / 2, PER_SCENE = 8;
   const scenes = [...document.querySelectorAll('.scene')];
@@ -574,7 +548,6 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
   const screen = $('#screen'), bars = [...document.querySelectorAll('#bar i')];
   const words = [...document.querySelectorAll('#words span')];
   const tc = $('#tc'), metro = $('#metro'), scNo = $('#scNo');
-  const roots = [48, 53, 55, 57, 53, 48];
   let start = performance.now(), lastTick = -1, cur = -1, running = true;
 
   const setScene = (i) => {
@@ -587,7 +560,6 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
     scNo.textContent = String(i + 1).padStart(2, '0');
     bars.forEach((b, k) => { b.classList.toggle('done', k < i); b.classList.toggle('now', k === i); });
     words.forEach((w) => w.classList.remove('show'));
-    note(roots[i], 1.6, 0.12); note(roots[i] + 7, 1.6, 0.08);
     cur = i;
   };
 
@@ -598,9 +570,8 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
     if (sIdx === 1) {
       const idx = melody[inScene];
       keys[idx].classList.add('on'); setTimeout(() => keys[idx].classList.remove('on'), EIGHTH * 0.9);
-      note(whiteMidi[idx], 0.8);
     }
-    if (sIdx === 2 && inScene % 2 === 0 && words[inScene / 2]) { words[inScene / 2].classList.add('show'); note(72 + inScene, 0.4, 0.1); }
+    if (sIdx === 2 && inScene % 2 === 0 && words[inScene / 2]) { words[inScene / 2].classList.add('show'); }
   };
 
   const fmt = (n) => String(n).padStart(2, '0');
