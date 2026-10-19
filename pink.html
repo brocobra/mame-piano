@@ -265,6 +265,10 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .map__link { font: 500 13px/1 var(--gothic); padding: 14px 6px; text-decoration: underline; text-underline-offset: 3px; }
 .map iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; filter: grayscale(.4) contrast(1.05); }
 .ph img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.voice { margin-top: 28px; padding: 22px 0 22px 26px; border-left: 3px solid var(--accent); }
+.voice p { font: 700 clamp(17px, 1.7vw, 21px)/1.8 var(--mincho); margin: 0; max-width: none; }
+.voice p span { display: inline-block; }
+.voice cite { display: block; margin-top: 10px; font: 400 12px/1 var(--mono); font-style: normal; letter-spacing: .15em; color: var(--mute); }
 .career { list-style: none; margin-top: 24px; border-top: 1px solid #efcfd4; }
 .career li { font-size: 14px; padding: 10px 0 10px 1.4em; border-bottom: 1px solid #efcfd4; position: relative; }
 .career li::before { content: "♪"; position: absolute; left: 0; color: var(--accent); }
@@ -447,6 +451,10 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
     <div>
       <h2 class="h2"><span class="en">The Teacher</span>おしゃべりしながら、<br>ちゃんと上達。</h2>
       <div class="teacher__name">小池 先生<small>KOIKE</small></div>
+      <blockquote class="voice">
+        <p><span>スマホから流れてくる音楽も、</span><span>すてきです。</span><br><span>でも、生のピアノの音色も、</span><span>とってもいいものですよ。</span></p>
+        <cite>— 小池先生</cite>
+      </blockquote>
       <p>ヤマハ音楽教室のピアノ講師をへて、自宅で教室をひらきました。講師歴は30年。これまで教えた生徒さんは1,500人を超えます。一男一女の母でもあります。</p>
       <p>90歳になる歌田紀子先生のもとで、いまも勉強を続けている歌田門下のひとりです。</p>
       <ul class="career">
